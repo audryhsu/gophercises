@@ -32,12 +32,15 @@ func handler(numStories int, tpl *template.Template) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		var client hn.Client
+		// api call gets a slice unfiltered HN item ids
 		ids, err := client.TopItems()
 		if err != nil {
 			http.Error(w, "Failed to load top stories", http.StatusInternalServerError)
 			return
 		}
 		var stories []item
+
+		// for each id, make an api call to get the post item
 		for _, id := range ids {
 			hnItem, err := client.GetItem(id)
 			if err != nil {
